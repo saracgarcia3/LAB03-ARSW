@@ -1,6 +1,8 @@
 package edu.eci.arsw.blueprints.model;
 
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,7 +17,7 @@ public class Blueprint {
         this.author = author;
         this.name = name;
         if (pts != null) {
-            for (Point p : pts) points.add(p);
+            points.addAll(Arrays.asList(pts));
         }
     }
 

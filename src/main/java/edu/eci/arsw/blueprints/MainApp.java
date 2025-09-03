@@ -1,29 +1,67 @@
 package edu.eci.arsw.blueprints;
 
+import java.util.Set;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import edu.eci.arsw.blueprints.config.AppConfig;
 import edu.eci.arsw.blueprints.model.Blueprint;
 import edu.eci.arsw.blueprints.model.Point;
+import edu.eci.arsw.blueprints.persistence.BlueprintNotFoundException;
+import edu.eci.arsw.blueprints.persistence.BlueprintPersistenceException;
 import edu.eci.arsw.blueprints.services.BlueprintsServices;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class MainApp {
     public static void main(String[] args) throws Exception {
-        // Levantar el contexto de Spring con tu clase de configuración
-        try (AnnotationConfigApplicationContext ctx =
-                     new AnnotationConfigApplicationContext(Config.class)) {
+        ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class);
 
-            // Obtener el servicio inyectado por Spring
-            BlueprintsServices services = ctx.getBean(BlueprintsServices.class);
+        BlueprintsServices services = ctx.getBean(BlueprintsServices.class);
 
-            // Probar que funciona
-            Blueprint bp = new Blueprint("alice", "house",
-                    new Point[]{ new Point(0, 0), new Point(10, 10) });
-            services.addNewBlueprint(bp);
+        Blueprint a1 = new Blueprint("alice", "house",
+                new Point[]{ new Point(0,0), new Point(10,10) });
 
-            System.out.println("Blueprint recuperado: "
-                    + services.getBlueprint("alice", "house"));
-            System.out.println("Todos los blueprints: "
-                    + services.getAllBlueprints());
+        Blueprint a2 = new Blueprint("alice", "cabin",
+                new Point[]{ new Point(5,5), new Point(7,9), new Point(12,15) });
+
+        Blueprint b1 = new Blueprint("bob", "bridge",
+                new Point[]{ new Point(1,1), new Point(2,2) });
+
+        try {
+            services.addNewBlueprint(a1);
+            services.addNewBlueprint(a2);
+            services.addNewBlueprint(b1);
+            services.addNewBlueprint(new Blueprint("alice","house", new Point[]{ new Point(99,99) }));
+        } catch (BlueprintPersistenceException e) {
+            System.out.println("✔️ Duplicado detectado (como se esperaba): " + e.getMessage());
         }
+
+        try {
+            Blueprint loaded = services.getBlueprint("alice","house");
+            System.out.println("\nPlano específico alice/house:");
+            System.out.println("Autor: " + loaded.getAuthor() + " | Nombre: " + loaded.getName()
+                    + " | Puntos: " + loaded.getPoints());
+        } catch (BlueprintNotFoundException e) {
+            System.out.println("No se encontró el plano solicitado: " + e.getMessage());
+        }
+
+        try {
+            Set<Blueprint> deAlice = services.getBlueprintsByAuthor("alice");
+            System.out.println("\nPlanos de 'alice' (" + deAlice.size() + "):");
+            for (Blueprint bp : deAlice) {
+                System.out.println(" - " + bp.getName() + " -> " + bp.getPoints());
+            }
+        } catch (BlueprintNotFoundException e) {
+            System.out.println("Autor sin planos: " + e.getMessage());
+        }
+
+        // 6) Listar todos
+        System.out.println("\nTodos los planos (" + services.getAllBlueprints().size() + "):");
+        for (Blueprint bp : services.getAllBlueprints()) {
+            System.out.println(" * " + bp.getAuthor() + "/" + bp.getName());
+        }
+
+        System.out.println("\n✅ Punto 3 verificado: registrar/consultar funciona con Spring.");
     }
 }
 

@@ -1,7 +1,7 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
+<project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>edu.eci.arsw</groupId>
@@ -19,14 +19,26 @@
   </properties>
 
   <dependencies>
-    <!-- Spring Core + Context para DI por anotaciones -->
+    <!-- Spring Context (incluye core/beans/context) -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
       <version>${spring.version}</version>
     </dependency>
 
-    <!-- JUnit 4 para los tests del laboratorio -->
+    <!-- Forzar carga explícita de módulos Spring -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <!-- JUnit 4 -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -34,7 +46,7 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- SLF4J simple para logs (opcional) -->
+    <!-- SLF4J simple logger (opcional, para System.out bonito) -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
@@ -44,7 +56,17 @@
 
   <build>
     <plugins>
-      <!-- Asegura que JUnit 4 corra bien -->
+      <!-- Para correr tu MainApp con mvn exec:java -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.5.0</version>
+        <configuration>
+          <mainClass>edu.eci.arsw.blueprints.MainApp</mainClass>
+        </configuration>
+      </plugin>
+
+      <!-- Para ejecutar pruebas con JUnit 4 -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -58,3 +80,4 @@
     </plugins>
   </build>
 </project>
+
