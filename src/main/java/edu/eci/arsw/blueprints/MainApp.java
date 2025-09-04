@@ -33,12 +33,12 @@ public class MainApp {
             services.addNewBlueprint(b1);
             services.addNewBlueprint(new Blueprint("alice","house", new Point[]{ new Point(99,99) }));
         } catch (BlueprintPersistenceException e) {
-            System.out.println("✔️ Duplicado detectado (como se esperaba): " + e.getMessage());
+            System.out.println(" Duplicado detectado: " + e.getMessage());
         }
 
         try {
-            Blueprint loaded = services.getBlueprint("alice","house");
-            System.out.println("\nPlano específico alice/house:");
+            Blueprint loaded = services.getBlueprint("alice","casa");
+            System.out.println("\nPlano específico alice/casa:");
             System.out.println("Autor: " + loaded.getAuthor() + " | Nombre: " + loaded.getName()
                     + " | Puntos: " + loaded.getPoints());
         } catch (BlueprintNotFoundException e) {
