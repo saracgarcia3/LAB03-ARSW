@@ -79,7 +79,7 @@ public class BlueprintsServices {
     @Autowired
     public BlueprintsServices(BlueprintsPersistence bpp, BlueprintFilter filter) {
         this.bpp = bpp;
-        this.filter = filter; // Se inyecta el filtro activo (A o B)
+        this.filter = filter;
     }
 
     public Blueprint getBlueprint(String author, String name) throws BlueprintNotFoundException {
